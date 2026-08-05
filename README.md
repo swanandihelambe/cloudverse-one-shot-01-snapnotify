@@ -35,9 +35,7 @@ The project was built as part of the **CloudVerse** series to gain hands-on expe
 ## 🏗️ Architecture
 
 <p align="center">
-
-![Architecture](architecture/architecture.png)
-
+  <img src="architecture/snapnotify-architecture.drawio.png" alt="SnapNotify Architecture" width="450">
 </p>
 
 ---
