@@ -1,0 +1,58 @@
+import json
+import boto3
+import os
+from datetime import datetime
+
+# Create SNS client
+sns = boto3.client("sns")
+
+# Read SNS Topic ARN from environment variable
+TOPIC_ARN = os.environ["SNS_TOPIC_ARN"]
+
+
+def lambda_handler(event, context):
+    try:
+        # Extract bucket name
+        bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+
+        # Extract uploaded file name
+        file_name = event["Records"][0]["s3"]["object"]["key"]
+
+        # Current upload time
+        upload_time = datetime.now().strftime("%d-%b-%Y %I:%M %p")
+
+        # Email subject
+        subject = "📸 New Image Uploaded - SnapNotify"
+
+        # Email body
+        message = f"""
+A new image has been uploaded successfully.
+
+Bucket Name : {bucket_name}
+
+File Name   : {file_name}
+
+Upload Time : {upload_time}
+"""
+
+        # Publish message to SNS
+        sns.publish(
+            TopicArn=TOPIC_ARN,
+            Subject=subject,
+            Message=message
+        )
+
+        print("Notification sent successfully.")
+
+        return {
+            "statusCode": 200,
+            "body": json.dumps("Success")
+        }
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+
+        return {
+            "statusCode": 500,
+            "body": json.dumps(str(e))
+        }
